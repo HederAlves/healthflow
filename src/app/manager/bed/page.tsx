@@ -109,7 +109,7 @@ const BedForm = () => {
     };
 
     return (
-        <div className="w-[92vw] md:w-full mt-2 md:mt-0 p-4">
+        <div className="w-[92vw] sm:w-full mt-2 md:mt-0 p-4">
             <h1 className="text-xl text-center md:text-start font-bold pb-2">Leitos</h1>
             <div className="px-6 pb-6 pt-2 bg-white shadow-md rounded-lg">
                 {/* Formulário de Cadastro */}
@@ -209,9 +209,8 @@ const BedForm = () => {
                             <thead>
                                 <tr>
                                     <th className="text-sm px-4 py-2 border-b text-start">Leito</th>
-                                    <th className="text-sm px-4 py-2 border-b text-start">Ala</th>
                                     <th className="text-sm px-4 py-2 border-b text-start">Quarto</th>
-                                    <th className="text-sm px-4 py-2 border-b sm:text-center">Status</th>
+                                    <th className="text-sm px-4 py-2 border-b text-start">Status</th>
                                     <th className="text-sm px-4 py-2 border-b text-start">Ações</th>
                                 </tr>
                             </thead>
@@ -219,10 +218,9 @@ const BedForm = () => {
                                 {beds && beds.length > 0 ? (
                                     beds.map((bed: Bed) => (
                                         <tr key={bed.id}>
-                                            <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{bed.number}</td>
-                                            <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{bed.ward}</td>
-                                            <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{bed.room}</td>
-                                            <td className="text-sm px-4 border-b min-w- max-w-[18ch] truncate">
+                                            <td className="text-sm px-4 py-2 border-b max-w-[14ch] truncate">{bed.number}</td>
+                                            <td className="text-sm px-4 py-2 border-b max-w-[14ch] truncate">{bed.room}</td>
+                                            <td className="text-sm px-4 border-b max-w-[14ch] truncate">
                                                 <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${bed.status ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
                                                     {bed.status ? 'Disponível' : 'Ocupado'}
                                                 </span>
@@ -272,17 +270,6 @@ const BedForm = () => {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Ala:</label>
-                                <input
-                                    type="text"
-                                    name="ward"
-                                    value={editFormData.ward}
-                                    onChange={handleEditChange}
-                                    required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                />
-                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -381,17 +368,17 @@ const BedForm = () => {
 
             {/* Mensagens de Sucesso */}
             {createSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Leito cadastrado com sucesso!
                 </div>
             )}
             {deleteSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Leito excluído com sucesso!
                 </div>
             )}
             {updateSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Leito atualizado com sucesso!
                 </div>
             )}
