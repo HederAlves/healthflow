@@ -315,17 +315,17 @@ const DoctorForm = () => {
 
             {/* Mensagens de Sucesso */}
             {createSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Médico cadastrado com sucesso!
                 </div>
             )}
             {deleteSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Médico excluído com sucesso!
                 </div>
             )}
             {updateSuccess && (
-                <div className="fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[6.6px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Médico atualizado com sucesso!
                 </div>
             )}
