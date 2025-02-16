@@ -22,7 +22,7 @@ const Sidebar = () => {
     return (
         <div>
             {/* Sidebar Desktop */}
-            <div className="min-h-full h-screen hidden md:block lg:w-60 bg-gray-800 text-white">
+            <div className="min-h-full w-[260px] h-screen hidden md:block  bg-gray-800 text-white">
                 <div className="p-5">
                     <nav className="mt-5">
                         <ul>
@@ -75,7 +75,7 @@ const Sidebar = () => {
             </div>
 
             {/* Menu Hambúrguer (Mobile & Tablet) */}
-            <div className="md:hidden absolute w-[350px] z-30">
+            <div className="md:hidden absolute w-full lg:w-[350px] z-30">
                 <button
                     onClick={toggleSidebar}
                     className="p-4 text-white bg-gray-800"
@@ -141,21 +141,21 @@ const Sidebar = () => {
                                         onClick={toggleDropdown}
                                         className="block py-2 px-4 hover:bg-gray-600 rounded w-full text-left"
                                     >
-                                        Cadastro
+                                        Gerenciar
                                     </button>
                                     {isDropdownOpen && (
                                         <ul className="ml-4 mt-2 bg-gray-700 rounded">
                                             <li>
-                                                <Link href="/manager/doctor" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Médico</Link>
+                                                <Link href="/manager/doctor" onClick={closeSidebar} className="block py-2 px-[10px] hover:bg-gray-600 rounded">Médico</Link>
                                             </li>
                                             <li>
-                                                <Link href="/manager/nurse" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Enfermeiro</Link>
+                                                <Link href="/manager/nurse" onClick={closeSidebar} className="block py-2 px-[10px] hover:bg-gray-600 rounded">Enfermeiro</Link>
                                             </li>
                                             <li>
-                                                <Link href="/manager/patient" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Paciente</Link>
+                                                <Link href="/manager/patient" onClick={closeSidebar} className="block py-2 px-[10px] hover:bg-gray-600 rounded">Paciente</Link>
                                             </li>
                                             <li>
-                                                <Link href="/manager/bed" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Leito</Link>
+                                                <Link href="/manager/bed" onClick={closeSidebar} className="block py-2 px-[10px] hover:bg-gray-600 rounded">Leito</Link>
                                             </li>
                                         </ul>
                                     )}

@@ -34,11 +34,11 @@ const BedsPage = () => {
                                 </p>
                             </div>
                             <div>
-                                <h2 className="text-xl font-semibold mb-2 min-w- max-w-[16ch] truncate">{bed.number}</h2>
-                                <p className="text-gray-500 min-w- max-w-[18ch] truncate">Ala: {bed.ward}</p>
-                                <p className="text-gray-500 min-w- max-w-[18ch] truncate">Quarto: {bed.room}</p>
-                                <p className="text-gray-500 min-w- max-w-[18ch] truncate">Corredor: {bed.corridor}</p>
-                                <p className="text-gray-500 min-w- max-w-[18ch] truncate">Andar: {bed.floor}</p>
+                                <h2 className="text-xl font-semibold mb-2 max-w-[10ch] truncate">{bed.number}</h2>
+                                <p className="text-gray-500 max-w-[12ch] truncate">Ala: {bed.ward}</p>
+                                <p className="text-gray-500 max-w-[12ch] truncate">Quarto: {bed.room}</p>
+                                <p className="text-gray-500 max-w-[12ch] truncate">Corredor: {bed.corridor}</p>
+                                <p className="text-gray-500 max-w-[12ch] truncate">Andar: {bed.floor}</p>
                             </div>
                         </div>
                     </div>
