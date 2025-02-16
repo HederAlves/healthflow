@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { HiChatAlt2 } from 'react-icons/hi';
@@ -30,7 +31,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }, []);
 
     const handleSendMessage = () => {
-        setSuccessMessage(`Mensagem enviada para ${selectedPerson?.name?.slice(0, 12) ?? ""} com sucesso!`);
+        setSuccessMessage(`Mensagem enviada para 
+            ${selectedPerson?.name?.slice(0, 12) ?? ""}`);
         setSelectedPerson(null);
         setTimeout(() => setSuccessMessage(null), 3000);
     };
@@ -38,7 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex h-full relative overflow-hidden">
             {successMessage && (
-                <div className="absolute top-[500px] bg-green-500 text-white px-4 py-2 rounded-md shadow-md z-50 transition-opacity duration-300 truncate">
+                <div className="fixed bottom-2 w-screen bg-green-500 text-white px-4 py-2 rounded-md shadow-md z-50 transition-opacity duration-300 truncate">
                     {successMessage}
                 </div>
             )}
@@ -52,7 +54,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </button>
             )}
 
-            <div className="flex-1 p-1">{children}</div>
+            <div className="flex-1 p-1 w-70">{children}</div>
 
             {(isSidebarOpen || window.innerWidth >= 1024) && (
                 <>
@@ -63,7 +65,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         ></div>
                     )}
 
-                    <aside className={`fixed lg:static top-0 right-0 h-full w-[220px] sm:w-[250px] bg-white shadow-lg border-l border-gray-200 p-4 flex flex-col z-40 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-fu' : 'translate-x-full sm:translate-x-0'}`}>
+                    <aside className={`fixed lg:static top-0 right-0 h-full w-[220px] sm:w-[200px] bg-white shadow-lg border-l border-gray-200 p-4 flex flex-col z-40 sm:z-0 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-fu' : 'translate-x-full sm:translate-x-0'}`}>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-lg font-semibold">Mensageiro</h2>
                             <button
