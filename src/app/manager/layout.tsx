@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const doctors = useSelector((state: RootState) => state.doctor.doctors);
     const nurses = useSelector((state: RootState) => state.nurse.nurses);
     const [selectedPerson, setSelectedPerson] = useState<{ id: string; name: string } | null>(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(typeof window !== 'undefined' && window.innerWidth >= 1024);
+    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
@@ -22,12 +22,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }, [dispatch]);
 
     useEffect(() => {
-        const handleResize = () => {
+        // Verifica se está no cliente antes de acessar o `window`
+        if (typeof window !== 'undefined') {
             setIsSidebarOpen(window.innerWidth >= 1024);
-        };
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+            const handleResize = () => {
+                setIsSidebarOpen(window.innerWidth >= 1024);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
     }, []);
 
     const handleSendMessage = () => {
@@ -56,9 +61,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <div className="flex-1 p-1 w-70">{children}</div>
 
-            {(isSidebarOpen || window.innerWidth >= 1024) && (
+            {(isSidebarOpen || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
                 <>
-                    {isSidebarOpen && window.innerWidth < 1024 && (
+                    {isSidebarOpen && typeof window !== 'undefined' && window.innerWidth < 1024 && (
                         <div
                             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
                             onClick={() => setIsSidebarOpen(false)}
