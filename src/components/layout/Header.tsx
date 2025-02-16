@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, Home, Filter } from "lucide-react";
+import { Bell, Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
