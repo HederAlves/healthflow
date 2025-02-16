@@ -106,17 +106,22 @@ const NurseForm = () => {
     };
 
     return (
-        <div className="w-[92vw] md:w-[77vw] lg:w-[60vw] mt-2 md:mt-0 p-4">
+        <div className="w-[92vw] sm:w-full mt-2 md:mt-0 p-4">
             <h1 className="text-xl text-center md:text-start font-bold pb-2">Enfermeiros</h1>
+
+            {/* Formulário de Cadastro */}
             <div className="px-6 pb-6 pt-2 bg-white shadow-md rounded-lg">
-                {/* Formulário de Cadastro */}
                 <div className="border border-gray-300 rounded-lg p-4 sm:w-full sm:mr-4">
                     <form onSubmit={handleCreateSubmit} className="space-y-4">
                         <h3 className='font-semibold'>Cadastrar</h3>
                         <div className='flex flex-col sm:flex-row sm:justify-start gap-2 sm:gap-6 mb-2 sm:mb-0'>
+
+                            {/* Ícone do Enfermeiro */}
                             <div className='flex justify-center my-4 sm:flex-none sm:my-0'>
                                 <FaUserNurse size={50} color="#70748D" className='ml-5 mr-8 mt-2' />
                             </div>
+
+                            {/* Campo de Nome */}
                             <div className='w-full'>
                                 <label className="block text-sm font-medium text-gray-700">Nome:</label>
                                 <input
@@ -128,6 +133,8 @@ const NurseForm = () => {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+
+                            {/* Campo de Especialidade */}
                             <div className='w-full'>
                                 <label className="block text-sm font-medium text-gray-700">Especialidade:</label>
                                 <input
@@ -140,6 +147,8 @@ const NurseForm = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* Campo de Email e Telefone */}
                         <div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Email:</label>
@@ -164,6 +173,8 @@ const NurseForm = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* Botão de Submissão */}
                         <div className='flex justify-end'>
                             <button
                                 type="submit"
@@ -174,45 +185,45 @@ const NurseForm = () => {
                         </div>
                     </form>
                 </div>
+            </div>
 
-                {/* Tabela de Enfermeiros */}
-                <div className="border border-gray-300 rounded-lg px-3 py-4 w-full mt-4">
-                    <h3 className='font-semibold px-3 mb-2'>Cadastrados</h3>
-                    <div className="overflow-x-scroll sm:overflow-hidden min-w-full">
-                        <table className="min-w-full table-auto border-collapse">
-                            <thead>
-                                <tr>
-                                    <th className="text-sm px-4 py-2 border-b text-start">Nome</th>
-                                    <th className="text-sm px-4 py-2 border-b text-start">Especialidade</th>
-                                    <th className="text-sm px-4 py-2 border-b text-start">Telefone</th>
-                                    <th className="text-sm px-4 py-2 border-b text-center">Ações</th>
+            {/* Tabela de Enfermeiros */}
+            <div className="border border-gray-300 rounded-lg px-3 py-4 w-full mt-4">
+                <h3 className='font-semibold px-3 mb-2'>Cadastrados</h3>
+                <div className="overflow-x-scroll sm:overflow-hidden min-w-full">
+                    <table className="min-w-full table-auto border-collapse">
+                        <thead>
+                            <tr>
+                                <th className="text-sm px-4 py-2 border-b text-start">Nome</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Especialidade</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Telefone</th>
+                                <th className="text-sm px-4 py-2 border-b text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {nurses.map((nurse: Nurse) => (
+                                <tr key={nurse.id}>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{nurse.name}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{nurse.specialty}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{nurse.phone}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">
+                                        <button
+                                            onClick={() => handleEdit(nurse.id)}
+                                            className="text-blue-500 mr-2"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(nurse.id)}
+                                            className="text-red-500"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {nurses.map((nurse: Nurse) => (
-                                    <tr key={nurse.id}>
-                                        <td className="text-sm px-4 py-2 border-b min-w-[150px] max-w-[18ch] truncate">{nurse.name}</td>
-                                        <td className="text-sm px-4 py-2 border-b min-w-[150px] max-w-[18ch] truncate">{nurse.specialty}</td>
-                                        <td className="text-sm px-4 py-2 border-b min-w-[150px] max-w-[18ch] truncate">{nurse.phone}</td>
-                                        <td className="text-sm px-4 py-2 border-b min-w-[150px] max-w-[18ch] truncate text-center">
-                                            <button
-                                                onClick={() => handleEdit(nurse.id)}
-                                                className="text-blue-500 mr-2"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(nurse.id)}
-                                                className="text-red-500"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -221,10 +232,7 @@ const NurseForm = () => {
                 <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg w-1/3">
                         <h3 className="text-xl font-semibold mb-4">Editar Enfermeiro</h3>
-                        <form
-                            onSubmit={(e) => e.preventDefault()}
-                            className="space-y-4"
-                        >
+                        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Nome:</label>
                                 <input
@@ -311,26 +319,25 @@ const NurseForm = () => {
                     </div>
                 </div>
             )}
-            {/* Breadcrumb de Sucesso - Criação */}
+
+            {/* Breadcrumbs de Sucesso */}
             {createSuccess && (
-                <div className="fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Enfermeiro cadastrado com sucesso!
                 </div>
             )}
-            {/* Breadcrumb de Sucesso - Exclusão */}
             {deleteSuccess && (
-                <div className="fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Enfermeiro excluído com sucesso!
                 </div>
             )}
-
-            {/* Breadcrumb de Sucesso - Atualização */}
             {updateSuccess && (
-                <div className="fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
+                <div className="z-50 fixed bottom-20 right-[5.0px] sm:bottom-4 sm:right-2 mt-4 p-4 bg-green-100 text-green-700 border border-green-300 rounded-md">
                     Enfermeiro atualizado com sucesso!
                 </div>
             )}
         </div>
+
     );
 };
 
