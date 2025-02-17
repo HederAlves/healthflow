@@ -255,7 +255,7 @@ const BedForm = () => {
             {/* Modal de Edição */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg w-[600px]">
+                    <div className="bg-white p-6 rounded-lg md:w-1/3">
                         <h2 className="text-xl font-semibold mb-4">Editar Leito</h2>
                         <form onSubmit={handleUpdate} className="space-y-4">
                             <div>
@@ -322,7 +322,7 @@ const BedForm = () => {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-4 mt-4">
+                            <div className="flex justify-center md:justify-end gap-4 mt-4">
                                 <button
                                     onClick={handleUpdate}
                                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
