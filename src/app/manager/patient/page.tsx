@@ -219,7 +219,7 @@ const PatientForm = () => {
             {/* Modal de Edição */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg w-1/3">
+                    <div className="bg-white p-6 rounded-lg md:w-1/3">
                         <h3 className="text-xl font-semibold mb-4">Editar Paciente</h3>
                         <form
                             onSubmit={(e) => e.preventDefault()}
@@ -255,7 +255,7 @@ const PatientForm = () => {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
                                 />
                             </div>
-                            <div className="flex justify-end gap-4 mt-4">
+                            <div className="flex justify-center md:justify-end gap-4 mt-4">
                                 <button
                                     onClick={handleUpdate}
                                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
