@@ -87,7 +87,7 @@ export const updateHealthFlowFirebase = (healthFlow: HealthFlow) => async (dispa
     try {
         const healthFlowDoc = doc(db, 'healthflow', healthFlow.id);
         // Converte healthFlow para um objeto simples, sem a chave `id`
-        const { id, ...updatedFields } = healthFlow;
+        const { ...updatedFields } = healthFlow;
         await updateDoc(healthFlowDoc, updatedFields); // Passando apenas as propriedades atualizáveis
         dispatch(updateHealthFlow(healthFlow));
     } catch (error) {
