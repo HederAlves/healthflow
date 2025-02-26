@@ -10,6 +10,12 @@ export interface HealthFlow {
     doctorId: string;
     nurseId: string;
     createdAt: string;
+    vitalData?: {
+        temperature: number;
+        heartRate: number;
+        bloodPressure: number;
+        respiratoryRate: number;
+    }[];
 }
 
 export interface HealthFlowState {
@@ -63,6 +69,7 @@ export const fetchHealthFlows = () => async (dispatch: AppDispatch) => {
                 doctorId: data.doctorId,
                 nurseId: data.nurseId,
                 createdAt: data.createdAt,
+                vitalData: data.vitalData || [],
             };
         });
         dispatch(setHealthFlows(healthFlows));
@@ -72,10 +79,28 @@ export const fetchHealthFlows = () => async (dispatch: AppDispatch) => {
 };
 
 // Função para criar um novo fluxo de saúde no Firebase
-export const createHealthFlow = (healthFlow: Omit<HealthFlow, 'id'>) => async (dispatch: AppDispatch) => {
+export const createHealthFlow = (newHealthFlowData: Omit<HealthFlow, 'id'>) => async (dispatch: AppDispatch) => {
     try {
-        const healthFlowRef = await addDoc(collection(db, 'healthflow'), healthFlow);
-        const newHealthFlow = { ...healthFlow, id: healthFlowRef.id };
+        // Adicionar timestamp aos dados vitais
+        const updatedVitalData = newHealthFlowData.vitalData?.map(data => ({
+            ...data,
+            timestamp: new Date().toISOString(),
+        })) || [];
+
+        // Criar o objeto com timestamp
+        const healthFlowWithTimestamp = {
+            ...newHealthFlowData,
+            createdAt: new Date().toISOString(),
+            vitalData: updatedVitalData
+        };
+
+        // Salvar no Firestore
+        const healthFlowRef = await addDoc(collection(db, 'healthflow'), healthFlowWithTimestamp);
+
+        // Criar objeto final com ID
+        const newHealthFlow = { ...healthFlowWithTimestamp, id: healthFlowRef.id };
+
+        // Atualizar o Redux
         dispatch(addHealthFlow(newHealthFlow));
     } catch (error) {
         console.error('Error creating health flow: ', error);
