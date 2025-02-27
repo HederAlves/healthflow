@@ -2,16 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { Bed, fetchBeds } from "@/reducer/bedReducer";
 import { Doctor, fetchDoctors } from "@/reducer/doctorReducer";
 import { Nurse, fetchNurses } from "@/reducer/nurseReducer";
 import { Patient, fetchPatients } from "@/reducer/patientReducer";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { fetchHealthFlows, HealthFlow } from "@/reducer/healthflowReducer";
+import { createHealthFlow, deleteHealthFlowFirebase, fetchHealthFlows, HealthFlow, updateHealthFlowFirebase } from "@/reducer/healthflowReducer";
 
-const HealFlowForm = () => {
+const HealthFlowForm = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const reduxHealthFlows = useSelector((state: RootState) => state.healthflow.healthFlows);
 
     // Buscando dados do Redux
     const beds = useSelector((state: any) => state.bed.beds);
@@ -25,10 +26,13 @@ const HealFlowForm = () => {
         bedId: "",
         doctorId: "",
         nurseId: "",
+        vitalData: {
+            temperature: 0,
+            heartRate: 0,
+            bloodPressure: "0/0",
+            respiratoryRate: 0,
+        },
     });
-
-    // Lista local de fluxos cadastrados
-    const [HealthFlow, setHealFlows] = useState<HealthFlow[]>([]);
 
     // Estados para edição
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -36,7 +40,7 @@ const HealFlowForm = () => {
 
     // Estados para exclusão
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [healFlowToDelete, setHealFlowToDelete] = useState<string | null>(null);
+    const [healthFlowToDelete, setHealthFlowToDelete] = useState<string | null>(null);
 
     // Carrega os dados quando o componente é montado
     useEffect(() => {
@@ -48,8 +52,16 @@ const HealFlowForm = () => {
     }, [dispatch]);
 
     // Atualiza os dados do formulário de cadastro
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        // Se for um campo numérico, converte para número
+        setFormData(prev => ({
+            ...prev,
+            [name]: name.startsWith("vitalData.")
+                ? { ...prev.vitalData, [name.split(".")[1]]: Number(value) }
+                : value
+        }));
     };
 
     // Salva um novo fluxo de saúde na lista
@@ -65,13 +77,20 @@ const HealFlowForm = () => {
             return;
         }
 
-        const newHealFlow: HealthFlow = {
-            id: String(Date.now()),
+        const newHealthFlowData = {
             ...formData,
-            createdAt: ""
+            createdAt: new Date().toISOString(),
+            vitalData: [
+                {
+                    temperature: formData.vitalData.temperature,
+                    heartRate: 0, // Defina um valor padrão ou obtenha do formulário
+                    bloodPressure: "120/80", // Defina um valor padrão ou obtenha do formulário
+                    respiratoryRate: 0, // Defina um valor padrão ou obtenha do formulário
+                }
+            ]
         };
 
-        setHealFlows([...HealthFlow, newHealFlow]);
+        dispatch(createHealthFlow(newHealthFlowData));
 
         // Limpa o formulário
         setFormData({
@@ -79,14 +98,21 @@ const HealFlowForm = () => {
             bedId: "",
             doctorId: "",
             nurseId: "",
+            vitalData: {
+                heartRate: 0,
+                bloodPressure: "0/0",
+                respiratoryRate: 0,
+                temperature: 0
+            },
         });
     };
 
     // Abre o modal de edição com os dados do fluxo selecionado
     const handleEdit = (id: string) => {
-        const healFlow = HealthFlow.find((hf) => hf.id === id);
-        if (healFlow) {
-            setEditFormData(healFlow);
+        const healthFlow = reduxHealthFlows.find((hf) => hf.id === id);
+        console.log('Fluxo selecionado para edição:', healthFlow);
+        if (healthFlow) {
+            setEditFormData(healthFlow);
             setIsEditModalOpen(true);
         }
     };
@@ -104,32 +130,28 @@ const HealFlowForm = () => {
     // Atualiza o registro editado na lista
     const handleUpdate = () => {
         if (editFormData) {
-            setHealFlows(
-                HealthFlow.map((hf) =>
-                    hf.id === editFormData.id ? editFormData : hf
-                )
-            );
+            dispatch(updateHealthFlowFirebase(editFormData));
             setIsEditModalOpen(false);
         }
     };
 
     // Abre o modal de exclusão
     const handleDelete = (id: string) => {
-        setHealFlowToDelete(id);
+        setHealthFlowToDelete(id);
         setIsDeleteModalOpen(true);
     };
 
     // Confirma a exclusão do registro
     const confirmDelete = () => {
-        if (healFlowToDelete) {
-            setHealFlows(HealthFlow.filter((hf) => hf.id !== healFlowToDelete));
+        if (healthFlowToDelete) {
+            dispatch(deleteHealthFlowFirebase(healthFlowToDelete));
             setIsDeleteModalOpen(false);
         }
     };
 
     const cancelDelete = () => {
         setIsDeleteModalOpen(false);
-        setHealFlowToDelete(null);
+        setHealthFlowToDelete(null);
     };
 
     // Funções auxiliares para exibir as informações com base no id
@@ -253,6 +275,20 @@ const HealFlowForm = () => {
                         </select>
                     </div>
 
+                    <div className="mb-4">
+                        <label htmlFor="nurseId" className="block text-sm font-medium text-gray-700">
+                            temperatura
+                        </label>
+                        <input
+                            id="temperature"
+                            name="vitaData.temperature"
+                            type="number"
+                            value={formData.vitalData.temperature}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded-lg"
+                        />
+                    </div>
+
                     <div className="flex justify-end">
                         <button
                             type="button"
@@ -279,21 +315,21 @@ const HealFlowForm = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {HealthFlow.map((healFlow) => (
-                            <tr key={healFlow.id}>
-                                <td className="px-4 py-2">{getPatientName(healFlow.patientId)}</td>
-                                <td className="px-4 py-2">{getBedInfo(healFlow.bedId)}</td>
-                                <td className="px-4 py-2">{getDoctorInfo(healFlow.doctorId)}</td>
-                                <td className="px-4 py-2">{getNurseInfo(healFlow.nurseId)}</td>
+                        {reduxHealthFlows.map((healthFlow) => (
+                            <tr key={healthFlow.id}>
+                                <td className="px-4 py-2">{getPatientName(healthFlow.patientId)}</td>
+                                <td className="px-4 py-2">{getBedInfo(healthFlow.bedId)}</td>
+                                <td className="px-4 py-2">{getDoctorInfo(healthFlow.doctorId)}</td>
+                                <td className="px-4 py-2">{getNurseInfo(healthFlow.nurseId)}</td>
                                 <td className="px-4 py-2">
                                     <button
-                                        onClick={() => handleEdit(healFlow.id)}
+                                        onClick={() => handleEdit(healthFlow.id)}
                                         className="text-blue-500 hover:text-blue-700 mr-2"
                                     >
                                         <FaEdit />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(healFlow.id)}
+                                        onClick={() => handleDelete(healthFlow.id)}
                                         className="text-red-500 hover:text-red-700"
                                     >
                                         <FaTrash />
@@ -423,4 +459,4 @@ const HealFlowForm = () => {
     );
 };
 
-export default HealFlowForm;
+export default HealthFlowForm;
