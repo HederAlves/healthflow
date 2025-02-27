@@ -13,7 +13,7 @@ export interface HealthFlow {
     vitalData?: {
         temperature: number;
         heartRate: number;
-        bloodPressure: number;
+        bloodPressure: string;
         respiratoryRate: number;
     }[];
 }
