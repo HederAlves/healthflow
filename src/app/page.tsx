@@ -20,13 +20,13 @@ const HealthFlowList = () => {
     if (error) return <p>Erro ao carregar os dados: {error}</p>;
 
     return (
-        <div className="p-4">
+        <div className="p-4 flex">
             {healthFlows.map((flow) => (
-                <div key={flow.id} className="bg-white rounded-2xl shadow-md m-2">
-                    <div className="p-2 rounded-t-2xl">
+                <div key={`${flow.id}-${flow.doctorId}`} className="bg-white rounded-2xl shadow-md m-2 w-[250px]">
+                    <div className="p-2 rounded-t-2xl w-min-[250px]">
                         <div className="flex justify-between px-1 pt-1 border-b-2 border-black cursor-pointer">
                             <h3 className="text-xs font-semibold text-gray-500">Sinais Vitais</h3>
-                            <h3 className="text-base font-semibold">{flow.patientName || flow.patientId}</h3> {/* Nome do paciente */}
+                            <h3 className="text-base font-semibold">{flow.patientName}</h3>
                         </div>
                         {flow.vitalData && flow.vitalData.length > 0 && (
                             <div className="flex justify-between text-sm px-1 py-2">
@@ -43,28 +43,32 @@ const HealthFlowList = () => {
                     </div>
 
                     <div className="flex justify-between px-4">
-                        <span className="text-xs">ID do Paciente: {flow.patientId}</span>
-                        <span className="text-xs">ID do Leito: {flow.bedId}</span>
+                        <span className="text-xs mb-1">{flow.patientAgeGroup}</span>
+                        <span className="text-xs mb-1">{flow.patientDisease}</span>
                     </div>
                     <div className="flex justify-between items-center gap-8 bg-green-300 px-4 py-2">
                         <div>
-                            <span className="text-xs text-green-800">Doutor:</span>
-                            <h2 className="text-lg font-semibold text-green-800">{flow.doctorName || flow.doctorId}</h2> {/* Nome do médico */}
+                            <span className="text-xs text-green-800">Ala</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedWard}</h2>
                         </div>
                         <div>
-                            <span className="text-xs text-green-800">Enfermeiro:</span>
-                            <h2 className="text-lg font-semibold text-green-800">{flow.nurseName || flow.nurseId}</h2> {/* Nome do enfermeiro */}
+                            <span className="text-xs text-green-800">Quarto</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedRoom}</h2>
+                        </div>
+                        <div>
+                            <span className="text-xs text-green-800">Leito</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedNumber}</h2>
                         </div>
                     </div>
 
                     <div className="flex justify-between text-gray-700 px-4 py-2">
                         <div className="flex items-center gap-2 text-sm font-semibold">
                             <FaUserDoctor className="text-blue-500 w-5 h-5" />
-                            {flow.doctorName || flow.doctorId} {/* Nome do médico */}
+                            {flow.doctorName}
                         </div>
                         <div className="flex items-center gap-2 text-sm font-semibold">
                             <FaUserNurse className="text-green-500 w-5 h-5" />
-                            {flow.nurseName || flow.nurseId} {/* Nome do enfermeiro */}
+                            {flow.nurseName}
                         </div>
                     </div>
                 </div>
