@@ -52,7 +52,7 @@ const HealthFlowForm = () => {
     }, [dispatch]);
 
     // Atualiza os dados do formulário de cadastro
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value } = e.target;
 
         // Se for um campo numérico, converte para número
@@ -62,6 +62,34 @@ const HealthFlowForm = () => {
                 ? { ...prev.vitalData, [name.split(".")[1]]: Number(value) }
                 : value
         }));
+    };
+
+    const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+
+        if (name.startsWith('vitalData.')) {
+            const field = name.split('.')[1];
+
+            // Tratamento específico para pressão arterial, pois é uma string
+            if (field === 'bloodPressure') {
+                setFormData((prevState) => ({
+                    ...prevState,
+                    vitalData: {
+                        ...prevState.vitalData,
+                        [field]: value, // Valor direto para bloodPressure
+                    }
+                }));
+            } else {
+                // Para os campos numéricos, converte para número
+                setFormData((prevState) => ({
+                    ...prevState,
+                    vitalData: {
+                        ...prevState.vitalData,
+                        [field]: Number(value),
+                    }
+                }));
+            }
+        }
     };
 
     // Salva um novo fluxo de saúde na lista
@@ -83,9 +111,9 @@ const HealthFlowForm = () => {
             vitalData: [
                 {
                     temperature: formData.vitalData.temperature,
-                    heartRate: 0, // Defina um valor padrão ou obtenha do formulário
-                    bloodPressure: "120/80", // Defina um valor padrão ou obtenha do formulário
-                    respiratoryRate: 0, // Defina um valor padrão ou obtenha do formulário
+                    heartRate: formData.vitalData.heartRate,
+                    respiratoryRate: formData.vitalData.respiratoryRate,
+                    bloodPressure: formData.vitalData.bloodPressure,
                 }
             ]
         };
@@ -202,98 +230,148 @@ const HealthFlowForm = () => {
 
     return (
         <div className="w-full p-4">
-            <h1 className="text-xl font-bold mb-4">Cadastro de Fluxo de Saúde</h1>
+            <div className="flex justify-stretch">
+                <h1 className="text-xl font-bold mb-4 ml-40">Cadastro de Fluxo de Saúde</h1>
+                <h1 className="text-xl font-bold mb-4">Dados Vitais</h1>
+            </div>
 
             {/* Formulário de Cadastro */}
             <div className="bg-white shadow-md rounded-lg p-4 mb-6">
                 <form className="space-y-4">
-                    <div className="mb-4">
-                        <label htmlFor="patientId" className="block text-sm font-medium text-gray-700">
-                            Paciente
-                        </label>
-                        <select
-                            id="patientId"
-                            name="patientId"
-                            value={formData.patientId}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-lg"
-                            required
-                        >
-                            <option value="">Selecione um paciente</option>
-                            {patientOptions}
-                        </select>
-                    </div>
+                    <div className="flex justify-around">
+                        <div>
+                            <div className="mb-4">
+                                <label htmlFor="patientId" className="block text-sm font-medium text-gray-700">
+                                    Paciente
+                                </label>
+                                <select
+                                    id="patientId"
+                                    name="patientId"
+                                    value={formData.patientId}
+                                    onChange={handleChangeSelect}
+                                    className="w-full px-3 py-2 border rounded-lg"
+                                    required
+                                >
+                                    <option value="">Selecione um paciente</option>
+                                    {patientOptions}
+                                </select>
+                            </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="bedId" className="block text-sm font-medium text-gray-700">
-                            Leito
-                        </label>
-                        <select
-                            id="bedId"
-                            name="bedId"
-                            value={formData.bedId}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-lg"
-                            required
-                        >
-                            <option value="">Selecione um leito</option>
-                            {bedOptions}
-                        </select>
-                    </div>
+                            <div className="mb-4">
+                                <label htmlFor="bedId" className="block text-sm font-medium text-gray-700">
+                                    Leito
+                                </label>
+                                <select
+                                    id="bedId"
+                                    name="bedId"
+                                    value={formData.bedId}
+                                    onChange={handleChangeSelect}
+                                    className="w-full px-3 py-2 border rounded-lg"
+                                    required
+                                >
+                                    <option value="">Selecione um leito</option>
+                                    {bedOptions}
+                                </select>
+                            </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="doctorId" className="block text-sm font-medium text-gray-700">
-                            Médico
-                        </label>
-                        <select
-                            id="doctorId"
-                            name="doctorId"
-                            value={formData.doctorId}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-lg"
-                            required
-                        >
-                            <option value="">Selecione um médico</option>
-                            {doctorOptions}
-                        </select>
-                    </div>
+                            <div className="mb-4">
+                                <label htmlFor="doctorId" className="block text-sm font-medium text-gray-700">
+                                    Médico
+                                </label>
+                                <select
+                                    id="doctorId"
+                                    name="doctorId"
+                                    value={formData.doctorId}
+                                    onChange={handleChangeSelect}
+                                    className="w-full px-3 py-2 border rounded-lg"
+                                    required
+                                >
+                                    <option value="">Selecione um médico</option>
+                                    {doctorOptions}
+                                </select>
+                            </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="nurseId" className="block text-sm font-medium text-gray-700">
-                            Enfermeiro
-                        </label>
-                        <select
-                            id="nurseId"
-                            name="nurseId"
-                            value={formData.nurseId}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-lg"
-                            required
-                        >
-                            <option value="">Selecione um enfermeiro</option>
-                            {nurseOptions}
-                        </select>
-                    </div>
+                            <div className="mb-4">
+                                <label htmlFor="nurseId" className="block text-sm font-medium text-gray-700">
+                                    Enfermeiro
+                                </label>
+                                <select
+                                    id="nurseId"
+                                    name="nurseId"
+                                    value={formData.nurseId}
+                                    onChange={handleChangeSelect}
+                                    className="w-full px-3 py-2 border rounded-lg"
+                                    required
+                                >
+                                    <option value="">Selecione um enfermeiro</option>
+                                    {nurseOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="mb-4">
+                                <label htmlFor="temperature" className="block text-sm font-medium text-gray-700">
+                                    Temperatura
+                                </label>
+                                <input
+                                    id="temperature"
+                                    name="vitalData.temperature"
+                                    type="number"
+                                    value={formData.vitalData.temperature}
+                                    onChange={handleChangeInput}
+                                    className="w-full px-3 py-[6px] border rounded-lg"
+                                />
+                            </div>
 
-                    <div className="mb-4">
-                        <label htmlFor="nurseId" className="block text-sm font-medium text-gray-700">
-                            temperatura
-                        </label>
-                        <input
-                            id="temperature"
-                            name="vitaData.temperature"
-                            type="number"
-                            value={formData.vitalData.temperature}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded-lg"
-                        />
-                    </div>
+                            <div className="mb-4">
+                                <label htmlFor="heartRate" className="block text-sm font-medium text-gray-700">
+                                    Frequência Cardíaca
+                                </label>
+                                <input
+                                    id="heartRate"
+                                    name="vitalData.heartRate"
+                                    type="number"
+                                    value={formData.vitalData.heartRate}
+                                    onChange={handleChangeInput}
+                                    className="w-full px-3 py-[6px] border rounded-lg"
+                                />
+                            </div>
 
-                    <div className="flex justify-end">
+                            <div className="mb-4">
+                                <label htmlFor="respiratoryRate" className="block text-sm font-medium text-gray-700">
+                                    Frequência Respiratória
+                                </label>
+                                <input
+                                    id="respiratoryRate"
+                                    name="vitalData.respiratoryRate"
+                                    type="number"
+                                    value={formData.vitalData.respiratoryRate}
+                                    onChange={handleChangeInput}
+                                    className="w-full px-3 py-[6px] border rounded-lg"
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="bloodPressure" className="block text-sm font-medium text-gray-700">
+                                    Pressão Arterial
+                                </label>
+                                <input
+                                    id="bloodPressure"
+                                    name="vitalData.bloodPressure"
+                                    type="text"
+                                    value={formData.vitalData.bloodPressure}
+                                    onChange={handleChangeInput}
+                                    className="w-full px-3 py-[6px] border rounded-lg"
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                    <div className="flex justify-center">
                         <button
                             type="button"
                             onClick={handleSave}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                            className="w-[72%] px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                         >
                             Adicionar Fluxo de Saúde
                         </button>
@@ -302,43 +380,45 @@ const HealthFlowForm = () => {
             </div>
 
             {/* Tabela de Fluxos de Saúde */}
-            <div className="bg-white shadow-md rounded-lg p-4">
-                <h2 className="text-lg font-bold mb-4">Fluxos de Saúde Cadastrados</h2>
-                <table className="w-full table-auto">
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2">Paciente</th>
-                            <th className="px-4 py-2">Leito</th>
-                            <th className="px-4 py-2">Médico</th>
-                            <th className="px-4 py-2">Enfermeiro</th>
-                            <th className="px-4 py-2">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {reduxHealthFlows.map((healthFlow) => (
-                            <tr key={healthFlow.id}>
-                                <td className="px-4 py-2">{getPatientName(healthFlow.patientId)}</td>
-                                <td className="px-4 py-2">{getBedInfo(healthFlow.bedId)}</td>
-                                <td className="px-4 py-2">{getDoctorInfo(healthFlow.doctorId)}</td>
-                                <td className="px-4 py-2">{getNurseInfo(healthFlow.nurseId)}</td>
-                                <td className="px-4 py-2">
-                                    <button
-                                        onClick={() => handleEdit(healthFlow.id)}
-                                        className="text-blue-500 hover:text-blue-700 mr-2"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(healthFlow.id)}
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
+            <div className="border border-gray-300 rounded-lg px-3 py-4 w-full mt-4">
+                <h3 className='font-semibold px-3 mb-2'>Fluxos de Saúde Cadastrados</h3>
+                <div className="overflow-x-scroll sm:overflow-hidden min-w-full">
+                    <table className="min-w-full table-auto border-collapse">
+                        <thead>
+                            <tr>
+                                <th className="text-sm px-4 py-2 border-b text-start">Paciente</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Leito</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Médico</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Enfermeiro</th>
+                                <th className="text-sm px-4 py-2 border-b text-start">Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {reduxHealthFlows.map((healthFlow) => (
+                                <tr key={healthFlow.id}>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{getPatientName(healthFlow.patientId)}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{getBedInfo(healthFlow.bedId)}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{getDoctorInfo(healthFlow.doctorId)}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">{getNurseInfo(healthFlow.nurseId)}</td>
+                                    <td className="text-sm px-4 py-2 border-b min-w- max-w-[18ch] truncate">
+                                        <button
+                                            onClick={() => handleEdit(healthFlow.id)}
+                                            className="text-blue-500 hover:text-blue-700 mr-2"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(healthFlow.id)}
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Modal de Edição */}
