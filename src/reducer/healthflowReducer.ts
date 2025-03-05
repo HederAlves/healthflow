@@ -1,21 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firestore';
 import { AppDispatch } from '@/store/store';
 
+export interface VitalData {
+    temperature: number;
+    heartRate: number;
+    bloodPressure: string;
+    respiratoryRate: number;
+}
+
 export interface HealthFlow {
+    status?: "normal" | "aviso" | "alerta";
     id: string;
     patientId: string;
+    patientName?: string;
+    patientAgeGroup?: string;
+    patientDisease?: string;
     bedId: string;
+    bedNumber?: string;
+    bedWard?: string;
+    bedRoom?: string;
     doctorId: string;
+    doctorName?: string;
     nurseId: string;
+    nurseName?: string;
     createdAt: string;
-    vitalData?: {
-        temperature: number;
-        heartRate: number;
-        bloodPressure: string;
-        respiratoryRate: number;
-    }[];
+    vitalData?: VitalData[];
 }
 
 export interface HealthFlowState {
@@ -56,22 +67,45 @@ export const { setHealthFlows, addHealthFlow, updateHealthFlow, removeHealthFlow
 
 export default healthFlowSlice.reducer;
 
-// Função para buscar os fluxos de saúde do Firebase
 export const fetchHealthFlows = () => async (dispatch: AppDispatch) => {
     try {
         const querySnapshot = await getDocs(collection(db, 'healthflow'));
-        const healthFlows: HealthFlow[] = querySnapshot.docs.map(doc => {
-            const data = doc.data();
-            return {
-                id: doc.id,
-                patientId: data.patientId,
-                bedId: data.bedId,
-                doctorId: data.doctorId,
-                nurseId: data.nurseId,
-                createdAt: data.createdAt,
-                vitalData: data.vitalData || [],
-            };
-        });
+
+        const healthFlows: HealthFlow[] = await Promise.all(
+            querySnapshot.docs.map(async (docSnap) => {
+                const data = docSnap.data();
+
+                const healthFlow: HealthFlow = {
+                    id: docSnap.id,
+                    patientId: data.patientId,
+                    bedId: data.bedId,
+                    doctorId: data.doctorId,
+                    nurseId: data.nurseId,
+                    createdAt: data.createdAt,
+                    vitalData: data.vitalData || [],
+                };
+
+                // Buscar os dados do paciente, médico e enfermeiro em paralelo
+                const [patientDoc, doctorDoc, nurseDoc, bedDoc] = await Promise.all([
+                    getDoc(doc(db, 'patients', healthFlow.patientId)),
+                    getDoc(doc(db, 'doctors', healthFlow.doctorId)),
+                    getDoc(doc(db, 'nurses', healthFlow.nurseId)),
+                    getDoc(doc(db, 'beds', healthFlow.bedId)),
+                ]);
+
+                if (patientDoc.exists()) healthFlow.patientName = patientDoc.data()?.name;
+                if (patientDoc.exists()) healthFlow.patientAgeGroup = patientDoc.data()?.ageGroup;
+                if (patientDoc.exists()) healthFlow.patientDisease = patientDoc.data()?.disease;
+                if (doctorDoc.exists()) healthFlow.doctorName = doctorDoc.data()?.name;
+                if (nurseDoc.exists()) healthFlow.nurseName = nurseDoc.data()?.name;
+                if (bedDoc.exists()) healthFlow.bedNumber = bedDoc.data()?.number;
+                if (bedDoc.exists()) healthFlow.bedWard = bedDoc.data()?.ward;
+                if (bedDoc.exists()) healthFlow.bedRoom = bedDoc.data()?.room;
+
+                return healthFlow;
+            })
+        );
+
         dispatch(setHealthFlows(healthFlows));
     } catch (error) {
         console.error('Error fetching health flows: ', error);
@@ -108,15 +142,15 @@ export const createHealthFlow = (newHealthFlowData: Omit<HealthFlow, 'id'>) => a
 };
 
 // Função para atualizar um fluxo de saúde no Firebase
-export const updateHealthFlowFirebase = (healthFlow: HealthFlow) => async (dispatch: AppDispatch) => {
+export const updateHealthFlowFirebase = (updatedFlow: HealthFlow) => async (dispatch: AppDispatch) => {
     try {
-        const healthFlowDoc = doc(db, 'healthflow', healthFlow.id);
-        // Converte healthFlow para um objeto simples, sem a chave `id`
-        const { ...updatedFields } = healthFlow;
-        await updateDoc(healthFlowDoc, updatedFields); // Passando apenas as propriedades atualizáveis
-        dispatch(updateHealthFlow(healthFlow));
+        const healthFlowRef = doc(db, 'healthflow', updatedFlow.id);
+        await updateDoc(healthFlowRef, {
+            vitalData: updatedFlow.vitalData, // Apenas atualiza os dados vitais
+        });
+        dispatch(updateHealthFlow(updatedFlow)); // Atualiza no Redux também
     } catch (error) {
-        console.error('Error updating health flow: ', error);
+        console.error('Erro ao atualizar dados vitais: ', error);
     }
 };
 
