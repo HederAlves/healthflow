@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { HiChatAlt2 } from 'react-icons/hi';
 import { IoMdArrowBack } from 'react-icons/io';
@@ -13,27 +13,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const doctors = useSelector((state: RootState) => state.doctor.doctors);
     const nurses = useSelector((state: RootState) => state.nurse.nurses);
     const [selectedPerson, setSelectedPerson] = useState<{ id: string; name: string } | null>(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    useEffect(() => {
+    React.useEffect(() => {
         dispatch(fetchDoctors());
         dispatch(fetchNurses());
     }, [dispatch]);
-
-    useEffect(() => {
-        // Verifica se está no cliente antes de acessar o `window`
-        if (typeof window !== 'undefined') {
-            setIsSidebarOpen(window.innerWidth >= 1024);
-
-            const handleResize = () => {
-                setIsSidebarOpen(window.innerWidth >= 1024);
-            };
-
-            window.addEventListener('resize', handleResize);
-            return () => window.removeEventListener('resize', handleResize);
-        }
-    }, []);
 
     const handleSendMessage = () => {
         setSuccessMessage(`Mensagem enviada para 
@@ -50,71 +35,59 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
             )}
 
-            {!isSidebarOpen && (
-                <button
-                    className="lg:hidden fixed bottom-3 right-3 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50"
-                    onClick={() => setIsSidebarOpen(true)}
-                >
-                    <HiChatAlt2 size={24} />
-                </button>
-            )}
+            <button
+                className="lg:hidden fixed bottom-3 right-3 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50"
+                onClick={() => setSuccessMessage('Mensagem enviada')}
+            >
+                <HiChatAlt2 size={24} />
+            </button>
 
             <div className="flex-1 p-1 w-70">{children}</div>
 
-            {(isSidebarOpen || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
-                <>
-                    {isSidebarOpen && typeof window !== 'undefined' && window.innerWidth < 1024 && (
-                        <div
-                            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-                            onClick={() => setIsSidebarOpen(false)}
-                        ></div>
-                    )}
+            {/* Sidebar */}
+            <aside className="lg:relative hidden lg:block fixed top-0 right-0 h-full w-[220px] sm:w-[200px] bg-white shadow-lg border-l border-gray-200 p-4 flex-col z-40 sm:z-0">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">Mensageiro</h2>
+                    <button
+                        className="lg:hidden p-2 rounded-full hover:bg-gray-200"
+                        onClick={() => setSuccessMessage('Fechando sidebar')}
+                    >
+                        <IoMdArrowBack size={20} />
+                    </button>
+                </div>
 
-                    <aside className={`fixed lg:static top-0 right-0 h-full w-[220px] sm:w-[200px] bg-white shadow-lg border-l border-gray-200 p-4 flex flex-col z-40 sm:z-0 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-fu' : 'translate-x-full sm:translate-x-0'}`}>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold">Mensageiro</h2>
-                            <button
-                                className="lg:hidden p-2 rounded-full hover:bg-gray-200"
-                                onClick={() => setIsSidebarOpen(false)}
+                <div>
+                    <h3 className="text-md font-semibold mb-2 text-gray-700">Médicos</h3>
+                    <ul className="space-y-3 mb-4">
+                        {doctors.map((person) => (
+                            <li
+                                key={person.id}
+                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                                onClick={() => setSelectedPerson(person)}
                             >
-                                <IoMdArrowBack size={20} />
-                            </button>
-                        </div>
+                                <div className="min-w-3 h-3 rounded-full bg-green-500" />
+                                <p className="text-sm font-medium max-w-[16ch] truncate">Dr. {person.name}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-                        <div>
-                            <h3 className="text-md font-semibold mb-2 text-gray-700">Médicos</h3>
-                            <ul className="space-y-3 mb-4">
-                                {doctors.map((person) => (
-                                    <li
-                                        key={person.id}
-                                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
-                                        onClick={() => setSelectedPerson(person)}
-                                    >
-                                        <div className="min-w-3 h-3 rounded-full bg-green-500" />
-                                        <p className="text-sm font-medium max-w-[16ch] truncate">Dr. {person.name}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h3 className="text-md font-semibold mb-2 text-gray-700">Enfermeiros</h3>
-                            <ul className="space-y-3">
-                                {nurses.map((person) => (
-                                    <li
-                                        key={person.id}
-                                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
-                                        onClick={() => setSelectedPerson(person)}
-                                    >
-                                        <div className="min-w-3 h-3 rounded-full bg-green-500" />
-                                        <p className="text-sm font-medium max-w-[16ch] truncate">Enf. {person.name}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </aside>
-                </>
-            )}
+                <div>
+                    <h3 className="text-md font-semibold mb-2 text-gray-700">Enfermeiros</h3>
+                    <ul className="space-y-3">
+                        {nurses.map((person) => (
+                            <li
+                                key={person.id}
+                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                                onClick={() => setSelectedPerson(person)}
+                            >
+                                <div className="min-w-3 h-3 rounded-full bg-green-500" />
+                                <p className="text-sm font-medium max-w-[16ch] truncate">Enf. {person.name}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </aside>
 
             {selectedPerson && (
                 <div className="p-2 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
