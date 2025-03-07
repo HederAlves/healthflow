@@ -13,7 +13,8 @@ const PatientForm = () => {
     const [createFormData, setCreateFormData] = useState({
         name: '',
         disease: '',
-        ageGroup: ''
+        ageGroup: '',
+        patientGender: ''
     });
 
     // Estado para dados do formulário de edição
@@ -21,7 +22,8 @@ const PatientForm = () => {
         id: '',
         name: '',
         disease: '',
-        ageGroup: ''
+        ageGroup: '',
+        patientGender: ''
     });
 
     // Estado para controlar a visibilidade do modal de edição
@@ -37,6 +39,7 @@ const PatientForm = () => {
     const [updateSuccess, setUpdateSuccess] = useState(false);
 
     const [ageRange, setAgeRange] = useState('');
+    const [genderRange, setGenderRange] = useState('');
     // Usando useSelector para acessar a lista de pacientes do estado global
     const patients = useSelector((state: any) => state.patient.patients);
 
@@ -52,6 +55,10 @@ const PatientForm = () => {
         setAgeRange(e.target.value);  // Agora você lida com o evento de um <select>
     };
 
+    const handleGenderRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setGenderRange(e.target.value);  // Agora você lida com o evento de um <select>
+    };
+
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
     };
@@ -60,13 +67,13 @@ const PatientForm = () => {
         e.preventDefault();
 
         // Verifique se todos os campos obrigatórios estão preenchidos
-        if (!createFormData.name || !createFormData.disease || !ageRange) {
+        if (!createFormData.name || !createFormData.disease || !ageRange || !genderRange) {
             alert("Por favor, preencha todos os campos obrigatórios.");
             return;
         }
 
-        setCreateFormData({ name: '', disease: '', ageGroup: '' });
-        dispatch(createPatient({ ...createFormData, ageGroup: ageRange }));
+        setCreateFormData({ name: '', disease: '', ageGroup: '', patientGender: '' });
+        dispatch(createPatient({ ...createFormData, ageGroup: ageRange, patientGender: genderRange }));
 
         setCreateSuccess(true);
         setTimeout(() => setCreateSuccess(false), 3000);
@@ -162,6 +169,18 @@ const PatientForm = () => {
                                 <option value="criança">Criança</option>
                                 <option value="adulto">Adulto</option>
                                 <option value="idoso">Idoso</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="ageRange" className="block text-sm font-medium text-gray-700">Faixa Etária</label>
+                            <select
+                                id="ageRange"
+                                value={genderRange}
+                                onChange={handleGenderRangeChange}
+                                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            >
+                                <option value="homem">Homem</option>
+                                <option value="mulher">Mulher</option>
                             </select>
                         </div>
                         <div className='flex justify-end'>
