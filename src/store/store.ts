@@ -3,6 +3,8 @@ import doctorReducer from '@/reducer/doctorReducer';
 import healthflowReducer from '@/reducer/healthflowReducer';
 import nurseReducer from '@/reducer/nurseReducer';
 import patientReducer from '@/reducer/patientReducer';
+import residentReducer from '@/reducer/residentReducer';
+import teamReducer from '@/reducer/teamReducer';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
@@ -12,6 +14,8 @@ export const store = configureStore({
         patient: patientReducer,
         bed: bedReducer,
         healthflow: healthflowReducer,
+        resident: residentReducer,
+        team: teamReducer,
     },
 });
 
