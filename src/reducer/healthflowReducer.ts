@@ -3,6 +3,9 @@ import { collection, addDoc, getDocs, updateDoc, deleteDoc, getDoc, doc } from '
 import { db } from '@/lib/firestore';
 import { AppDispatch } from '@/store/store';
 
+export type AgeGroup = 'bebê' | 'criança' | 'adulto' | 'idoso';
+export type PatientGender = 'homem' | 'mulher';
+
 export interface VitalData {
     temperature: number;
     heartRate: number;
@@ -11,12 +14,12 @@ export interface VitalData {
 }
 
 export interface HealthFlow {
-    status?: "normal" | "aviso" | "alerta";
     id: string;
     patientId: string;
     patientName?: string;
-    patientAgeGroup?: string;
+    patientAgeGroup?: AgeGroup;
     patientDisease?: string;
+    patientGender?: PatientGender;
     bedId: string;
     bedNumber?: string;
     bedWard?: string;
@@ -95,6 +98,7 @@ export const fetchHealthFlows = () => async (dispatch: AppDispatch) => {
 
                 if (patientDoc.exists()) healthFlow.patientName = patientDoc.data()?.name;
                 if (patientDoc.exists()) healthFlow.patientAgeGroup = patientDoc.data()?.ageGroup;
+                if (patientDoc.exists()) healthFlow.patientGender = patientDoc.data()?.patientGender;
                 if (patientDoc.exists()) healthFlow.patientDisease = patientDoc.data()?.disease;
                 if (doctorDoc.exists()) healthFlow.doctorName = doctorDoc.data()?.name;
                 if (nurseDoc.exists()) healthFlow.nurseName = nurseDoc.data()?.name;
