@@ -3,15 +3,14 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from 'firebase
 import { db } from '@/lib/firestore';
 import { AppDispatch } from '@/store/store';
 
-// Interface do Patient
 export interface Patient {
     id: string;
     name: string;
     disease: string;
     ageGroup: string;
+    patientGender: string;
 }
 
-// Estado inicial do slice de pacientes
 export interface PatientState {
     patients: Patient[];
     loading: boolean;
@@ -24,7 +23,6 @@ const initialState: PatientState = {
     error: null,
 };
 
-// Slice de pacientes
 const patientSlice = createSlice({
     name: 'patient',
     initialState,
@@ -51,19 +49,17 @@ export const { setPatients, addPatient, editPatient, removePatient } = patientSl
 
 export default patientSlice.reducer;
 
-// Thunks para interagir com o Firestore
-
-// Função para buscar pacientes
 export const fetchPatients = () => async (dispatch: AppDispatch) => {
     try {
         const querySnapshot = await getDocs(collection(db, 'patients'));
         const patients: Patient[] = querySnapshot.docs.map(doc => {
             const data = doc.data();
             return {
-                id: doc.id, // O Firestore já gera o id para o novo documento
+                id: doc.id,
                 name: data.name,
                 disease: data.disease,
                 ageGroup: data.ageGroup,
+                patientGender: data.patientGender
             };
         });
         dispatch(setPatients(patients));
@@ -72,10 +68,9 @@ export const fetchPatients = () => async (dispatch: AppDispatch) => {
     }
 };
 
-// Função para criar um novo paciente
 export const createPatient = (patient: Omit<Patient, 'id'>) => async (dispatch: any) => {
     try {
-        if (!patient.name || !patient.disease || !patient.ageGroup) {
+        if (!patient.name || !patient.disease || !patient.ageGroup || !patient.patientGender) {
             console.error('Missing required patient fields');
             return;
         }
@@ -87,10 +82,9 @@ export const createPatient = (patient: Omit<Patient, 'id'>) => async (dispatch: 
     }
 };
 
-// Função para atualizar os dados de um paciente
 export const updatePatient = (patient: Patient) => async (dispatch: any) => {
     try {
-        if (!patient.id || !patient.name || !patient.disease || !patient.ageGroup) {
+        if (!patient.id || !patient.name || !patient.disease || !patient.ageGroup || !patient.patientGender) {
             console.error('Missing patient fields, cannot update patient.');
             return;
         }
@@ -100,6 +94,7 @@ export const updatePatient = (patient: Patient) => async (dispatch: any) => {
             name: patient.name,
             disease: patient.disease,
             ageGroup: patient.ageGroup,
+            patientGender: patient.patientGender,
         });
         dispatch(editPatient(patient));
     } catch (error) {
@@ -107,7 +102,6 @@ export const updatePatient = (patient: Patient) => async (dispatch: any) => {
     }
 };
 
-// Função para excluir um paciente
 export const deletePatient = (id: string) => async (dispatch: any) => {
     try {
         const patientRef = doc(db, 'patients', id);

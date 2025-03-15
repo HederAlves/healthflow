@@ -1,101 +1,203 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchHealthFlows, HealthFlow, updateHealthFlowFirebase } from '@/reducer/healthflowReducer';
+import { AppDispatch, RootState } from '@/store/store';
+import { GiHealthPotion } from 'react-icons/gi';
+import { FaThermometerHalf, FaHeartbeat, FaLungs, FaUserNurse } from 'react-icons/fa';
+import { FaUserDoctor } from 'react-icons/fa6';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export type AgeGroup = 'bebê' | 'criança' | 'adulto' | 'idoso';
+
+const HealthFlowList = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { healthFlows, loading, error } = useSelector((state: RootState) => state.healthflow);
+
+    // Estado do modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFlow, setSelectedFlow] = useState<HealthFlow | null>(null);
+    const [newVitalData, setNewVitalData] = useState({
+        temperature: '',
+        heartRate: '',
+        bloodPressure: '',
+        respiratoryRate: ''
+    });
+
+    useEffect(() => {
+        dispatch(fetchHealthFlows());
+    }, [dispatch]);
+
+    const handleModalOpen = (flow: HealthFlow) => {
+        setSelectedFlow(flow);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setSelectedFlow(null);
+        setNewVitalData({
+            temperature: '',
+            heartRate: '',
+            bloodPressure: '',
+            respiratoryRate: ''
+        });
+    };
+
+    const handleSubmit = () => {
+        if (selectedFlow) {
+            const updatedFlow = {
+                ...selectedFlow,
+                vitalData: [
+                    ...(selectedFlow.vitalData || []), // Adiciona os dados vitais existentes
+                    {
+                        temperature: parseFloat(newVitalData.temperature),
+                        heartRate: parseInt(newVitalData.heartRate),
+                        bloodPressure: newVitalData.bloodPressure,
+                        respiratoryRate: parseInt(newVitalData.respiratoryRate),
+                        timestamp: new Date().toISOString(),
+                    }
+                ]
+            };
+
+            // Enviar os dados para o Firebase (atualizando os dados vitais)
+            dispatch(updateHealthFlowFirebase(updatedFlow));
+            handleModalClose();
+        }
+    };
+
+    if (loading) return <p>Carregando...</p>;
+    if (error) return <p>Erro ao carregar os dados: {error}</p>;
+
+    return (
+        <div className="flex flex-col xl:flex-row flex-wrap p-4 mt-12 sm:mt-0">
+            {healthFlows.map((flow: HealthFlow) => (
+
+                <div
+                    key={`${flow.id}-${flow.doctorId}`}
+                    className="bg-white rounded-2xl shadow-md m-2 w-[244px]"
+                    onClick={() => handleModalOpen(flow)} // Abrir o modal ao clicar no card
+                >
+                    <div className="p-2 rounded-t-2xl w-min-[250px]">
+                        <div className="flex justify-between px-1 pt-1 border-b-2 border-black cursor-pointer">
+                            <h3 className="text-xs font-semibold text-gray-500">Sinais Vitais</h3>
+                            <h3 className="text-base font-semibold">{flow.patientName}</h3>
+                        </div>
+                        {flow.vitalData && (
+                            // Exibir os dados vitais mais recentes
+                            <div className="flex justify-between text-sm px-1 py-2">
+                                <div className="flex flex-col">
+                                    <span><GiHealthPotion className="text-purple-500 inline mr-2" /><strong>{flow.vitalData[flow.vitalData.length - 1].bloodPressure} mmHg</strong></span>
+                                    <span><FaThermometerHalf className="text-yellow-500 inline mr-2" /><strong>{flow.vitalData[flow.vitalData.length - 1].temperature}°C</strong></span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span><FaHeartbeat className="text-red-500 inline mr-2" /><strong>{flow.vitalData[flow.vitalData.length - 1].heartRate} bpm</strong></span>
+                                    <span><FaLungs className="text-blue-500 inline mr-2" /><strong>{flow.vitalData[flow.vitalData.length - 1].respiratoryRate} mm</strong></span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex justify-between px-4">
+                        <span className="text-xs mb-1">{flow.patientAgeGroup}</span>
+                        <span className="text-xs mb-1">{flow.patientDisease}</span>
+                    </div>
+                    <div className="flex justify-between items-center gap-8 bg-green-300 px-4 py-2">
+                        <div>
+                            <span className="text-xs text-green-800">Ala</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedWard}</h2>
+                        </div>
+                        <div>
+                            <span className="text-xs text-green-800">Quarto</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedRoom}</h2>
+                        </div>
+                        <div>
+                            <span className="text-xs text-green-800">Leito</span>
+                            <h2 className="text-lg font-semibold text-green-800">{flow.bedNumber}</h2>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-between text-gray-700 px-4 py-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold">
+                            <FaUserDoctor className="text-blue-500 w-5 h-5" />
+                            {flow.doctorName}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm font-semibold">
+                            <FaUserNurse className="text-green-500 w-5 h-5" />
+                            {flow.nurseName}
+                        </div>
+                    </div>
+                </div>
+            ))}
+
+            {/* Modal de Adição de Dados Vitais */}
+            {isModalOpen && selectedFlow && (
+                <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg w-96">
+                        <h3 className="text-xl font-semibold mb-4">Adicionar Dados Vitais</h3>
+                        <form>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Temperatura (°C)</label>
+                                <input
+                                    type="number"
+                                    value={newVitalData.temperature}
+                                    onChange={(e) => setNewVitalData({ ...newVitalData, temperature: e.target.value })}
+                                    className="mt-1 p-2 w-full border border-gray-300 rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Batimento Cardíaco (bpm)</label>
+                                <input
+                                    type="number"
+                                    value={newVitalData.heartRate}
+                                    onChange={(e) => setNewVitalData({ ...newVitalData, heartRate: e.target.value })}
+                                    className="mt-1 p-2 w-full border border-gray-300 rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Pressão Arterial</label>
+                                <input
+                                    type="text"
+                                    value={newVitalData.bloodPressure}
+                                    onChange={(e) => setNewVitalData({ ...newVitalData, bloodPressure: e.target.value })}
+                                    className="mt-1 p-2 w-full border border-gray-300 rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Frequência Respiratória (mm)</label>
+                                <input
+                                    type="number"
+                                    value={newVitalData.respiratoryRate}
+                                    onChange={(e) => setNewVitalData({ ...newVitalData, respiratoryRate: e.target.value })}
+                                    className="mt-1 p-2 w-full border border-gray-300 rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    type="button"
+                                    onClick={handleModalClose}
+                                    className="bg-gray-400 text-white px-4 py-2 rounded"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                >
+                                    Salvar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+    );
+};
+
+export default HealthFlowList;
