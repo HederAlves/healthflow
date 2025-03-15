@@ -7,6 +7,7 @@ export type AgeGroup = 'bebê' | 'criança' | 'adulto' | 'idoso';
 export type PatientGender = 'homem' | 'mulher';
 
 export interface VitalData {
+    timestamp: string;
     temperature: number;
     heartRate: number;
     bloodPressure: string;
@@ -30,6 +31,7 @@ export interface HealthFlow {
     nurseName?: string;
     createdAt: string;
     vitalData?: VitalData[];
+    abnormalDetails?: string[];
 }
 
 export interface HealthFlowState {
