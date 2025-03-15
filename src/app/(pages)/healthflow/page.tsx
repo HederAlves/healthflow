@@ -31,6 +31,7 @@ const HealthFlowForm = () => {
             heartRate: 0,
             bloodPressure: "0/0",
             respiratoryRate: 0,
+            timestamp: new Date().toISOString(),
         },
     });
 
@@ -114,7 +115,7 @@ const HealthFlowForm = () => {
                     heartRate: formData.vitalData.heartRate,
                     respiratoryRate: formData.vitalData.respiratoryRate,
                     bloodPressure: formData.vitalData.bloodPressure,
-                    timestamp: new Date().toISOString(),
+                    timestamp: formData.vitalData.timestamp,
                 }
             ]
         };
@@ -131,7 +132,8 @@ const HealthFlowForm = () => {
                 heartRate: 0,
                 bloodPressure: "0/0",
                 respiratoryRate: 0,
-                temperature: 0
+                temperature: 0,
+                timestamp: new Date().toISOString(),
             },
         });
     };
