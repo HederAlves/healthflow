@@ -114,6 +114,7 @@ const HealthFlowForm = () => {
                     heartRate: formData.vitalData.heartRate,
                     respiratoryRate: formData.vitalData.respiratoryRate,
                     bloodPressure: formData.vitalData.bloodPressure,
+                    timestamp: new Date().toISOString(),
                 }
             ]
         };
@@ -230,15 +231,14 @@ const HealthFlowForm = () => {
 
     return (
         <div className="w-full p-4">
-            <div className="flex justify-stretch">
-                <h1 className="text-xl font-bold mb-4 ml-40">Cadastro de Fluxo de Saúde</h1>
-                <h1 className="text-xl font-bold mb-4">Dados Vitais</h1>
+            <div className="lg:flex justify-stretch">
+                <h1 className="text-xl font-bold mt-14 mb-4 lg:ml-40 text-center">Acompanhamento de Dados Vitais</h1>
             </div>
 
             {/* Formulário de Cadastro */}
             <div className="bg-white shadow-md rounded-lg p-4 mb-6">
                 <form className="space-y-4">
-                    <div className="flex justify-around">
+                    <div className="lg:flex justify-around">
                         <div>
                             <div className="mb-4">
                                 <label htmlFor="patientId" className="block text-sm font-medium text-gray-700">
@@ -316,7 +316,6 @@ const HealthFlowForm = () => {
                                 <input
                                     id="temperature"
                                     name="vitalData.temperature"
-                                    type="number"
                                     value={formData.vitalData.temperature}
                                     onChange={handleChangeInput}
                                     className="w-full px-3 py-[6px] border rounded-lg"
@@ -330,7 +329,6 @@ const HealthFlowForm = () => {
                                 <input
                                     id="heartRate"
                                     name="vitalData.heartRate"
-                                    type="number"
                                     value={formData.vitalData.heartRate}
                                     onChange={handleChangeInput}
                                     className="w-full px-3 py-[6px] border rounded-lg"
@@ -344,7 +342,6 @@ const HealthFlowForm = () => {
                                 <input
                                     id="respiratoryRate"
                                     name="vitalData.respiratoryRate"
-                                    type="number"
                                     value={formData.vitalData.respiratoryRate}
                                     onChange={handleChangeInput}
                                     className="w-full px-3 py-[6px] border rounded-lg"
