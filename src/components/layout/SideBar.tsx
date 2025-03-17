@@ -121,7 +121,10 @@ const Sidebar = () => {
                         <nav className="mt-5">
                             <ul>
                                 <li>
-                                    <Link href="/" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Home</Link>
+                                    <Link href="/" className="block py-2 px-4 hover:bg-gray-600 rounded">Home</Link>
+                                </li>
+                                <li>
+                                    <Link href="/healthflow" className="block py-2 px-4 hover:bg-gray-600 rounded">Healthflow</Link>
                                 </li>
                                 <li>
                                     <Link href="/patients" onClick={closeSidebar} className="block py-2 px-4 hover:bg-gray-600 rounded">Patients</Link>
