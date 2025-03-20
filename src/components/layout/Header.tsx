@@ -154,16 +154,15 @@ const Header: React.FC = () => {
                                                         <p>Quarto: {flow.bedRoom}</p>
                                                         <p>Leito: {flow.bedNumber}</p>
                                                     </div>
-                                                    <div className="text-xs flex gap-2 mt-2">
-                                                        <p>Responsáveis:</p>
-                                                        <span className="flex gap-1">
+                                                    <div className="flex flex-col gap-2 text-gray-700 text-xs">
+                                                        <div className="flex gap-1">
                                                             <FaUserDoctor className="text-blue-500 w-3 h-3" />
-                                                            {flow.doctorName}
-                                                        </span>
-                                                        <span className="flex gap-1">
+                                                            <span className="truncate w-48">{flow.doctorName}</span>
+                                                        </div>
+                                                        <div className="flex gap-1">
                                                             <FaUserNurse className="text-green-500 w-3 h-3" />
-                                                            {flow.nurseName}
-                                                        </span>
+                                                            <span className="truncate">{flow.nurseName}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -201,16 +200,15 @@ const Header: React.FC = () => {
                                                     <p>Quarto: {flow.bedRoom}</p>
                                                     <p>Leito: {flow.bedNumber}</p>
                                                 </div>
-                                                <div className="text-xs flex gap-2 mt-2">
-                                                    <p>Responsáveis:</p>
-                                                    <span className="flex gap-1">
+                                                <div className="flex flex-col gap-2 text-gray-700 text-xs">
+                                                    <div className="flex gap-1">
                                                         <FaUserDoctor className="text-blue-500 w-3 h-3" />
-                                                        {flow.doctorName}
-                                                    </span>
-                                                    <span className="flex gap-1">
+                                                        <span className="truncate w-48">{flow.doctorName}</span>
+                                                    </div>
+                                                    <div className="flex gap-1">
                                                         <FaUserNurse className="text-green-500 w-3 h-3" />
-                                                        {flow.nurseName}
-                                                    </span>
+                                                        <span className="truncate">{flow.nurseName}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
