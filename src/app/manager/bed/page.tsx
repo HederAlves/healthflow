@@ -185,6 +185,7 @@ const BedForm = () => {
                                     onChange={(e) => setCreateFormData({ ...createFormData, status: e.target.value === "ocupado" })}
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 >
+                                    <option value="disponível">Selecione o Status</option>
                                     <option value="disponível">Disponível</option>
                                     <option value="ocupado">Ocupado</option>
                                 </select>
