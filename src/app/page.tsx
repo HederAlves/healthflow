@@ -75,7 +75,7 @@ const HealthFlowList = () => {
 
                 <div
                     key={`${flow.id}-${flow.doctorId}`}
-                    className="bg-white rounded-2xl shadow-md m-2 w-[244px]"
+                    className="bg-white rounded-2xl shadow-md m-2 w-[248px]"
                     onClick={() => handleModalOpen(flow)} // Abrir o modal ao clicar no card
                 >
                     <div className="p-2 rounded-t-2xl w-min-[250px]">
@@ -117,14 +117,14 @@ const HealthFlowList = () => {
                         </div>
                     </div>
 
-                    <div className="flex justify-between text-gray-700 px-4 py-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold">
+                    <div className="flex flex-col gap-2 text-gray-700 px-4 py-2">
+                        <div className="flex gap-2 text-sm font-semibold">
                             <FaUserDoctor className="text-blue-500 w-5 h-5" />
-                            {flow.doctorName}
+                            <span className="truncate w-48">{flow.doctorName}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm font-semibold">
+                        <div className="flex gap-2 text-sm font-semibold">
                             <FaUserNurse className="text-green-500 w-5 h-5" />
-                            {flow.nurseName}
+                            <span className="truncate">{flow.nurseName}</span>
                         </div>
                     </div>
                 </div>
