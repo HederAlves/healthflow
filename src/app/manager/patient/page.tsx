@@ -165,6 +165,7 @@ const PatientForm = () => {
                                 onChange={handleAgeRangeChange}
                                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             >
+                                <option value="">Selecione a Faixa Etária</option>
                                 <option value="bebê">Bebê</option>
                                 <option value="criança">Criança</option>
                                 <option value="adulto">Adulto</option>
@@ -172,15 +173,16 @@ const PatientForm = () => {
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="ageRange" className="block text-sm font-medium text-gray-700">Faixa Etária</label>
+                            <label htmlFor="ageRange" className="block text-sm font-medium text-gray-700">Genero</label>
                             <select
                                 id="ageRange"
                                 value={genderRange}
                                 onChange={handleGenderRangeChange}
                                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             >
-                                <option value="homem">Homem</option>
-                                <option value="mulher">Mulher</option>
+                                <option value="">Selecione o Genero</option>
+                                <option value="homem">Masculino</option>
+                                <option value="mulher">Feminino</option>
                             </select>
                         </div>
                         <div className='flex justify-end'>
@@ -255,24 +257,33 @@ const PatientForm = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Doença</label>
-                                <input
-                                    type="text"
-                                    name="disease"
-                                    value={editFormData.disease}
-                                    onChange={handleEditChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                                />
+                                <label htmlFor="ageRange" className="block text-sm font-medium text-gray-700">Genero</label>
+                                <select
+                                    id="ageRange"
+                                    value={ageRange}
+                                    onChange={handleAgeRangeChange}
+                                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                >
+                                    <option value="">{editFormData.ageGroup}</option>
+                                    <option value="bebê">Bebê</option>
+                                    <option value="criança">Criança</option>
+                                    <option value="adulto">Adulto</option>
+                                    <option value="idoso">Idoso</option>
+                                </select>
                             </div>
+
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Faixa Etária</label>
-                                <input
-                                    type="text"
-                                    name="ageGroup"
-                                    value={editFormData.ageGroup}
-                                    onChange={handleEditChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-                                />
+                                <label htmlFor="ageRange" className="block text-sm font-medium text-gray-700">Faixa Etária</label>
+                                <select
+                                    id="ageRange"
+                                    value={genderRange}
+                                    onChange={handleGenderRangeChange}
+                                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                >
+                                    <option value="">{editFormData.patientGender}</option>
+                                    <option value="homem">Masculino</option>
+                                    <option value="mulher">Feminino</option>
+                                </select>
                             </div>
                             <div className="flex justify-center md:justify-end gap-4 mt-4">
                                 <button
