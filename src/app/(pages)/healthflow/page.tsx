@@ -30,6 +30,7 @@ const HealthFlowForm = () => {
             temperature: 0,
             heartRate: 0,
             bloodPressure: "0/0",
+            saturation: 0,
             respiratoryRate: 0,
             timestamp: new Date().toISOString(),
         },
@@ -115,6 +116,7 @@ const HealthFlowForm = () => {
                     heartRate: formData.vitalData.heartRate,
                     respiratoryRate: formData.vitalData.respiratoryRate,
                     bloodPressure: formData.vitalData.bloodPressure,
+                    saturation: formData.vitalData.saturation,
                     timestamp: formData.vitalData.timestamp,
                 }
             ]
@@ -131,6 +133,7 @@ const HealthFlowForm = () => {
             vitalData: {
                 heartRate: 0,
                 bloodPressure: "0/0",
+                saturation: 0,
                 respiratoryRate: 0,
                 temperature: 0,
                 timestamp: new Date().toISOString(),
@@ -363,7 +366,19 @@ const HealthFlowForm = () => {
                                     className="w-full px-3 py-[6px] border rounded-lg"
                                 />
                             </div>
-
+                            <div className="mb-4">
+                                <label htmlFor="saturation" className="block text-sm font-medium text-gray-700">
+                                    SpO2
+                                </label>
+                                <input
+                                    id="saturation"
+                                    name="vitalData.saturation"
+                                    type="text"
+                                    value={formData.vitalData.saturation}
+                                    onChange={handleChangeInput}
+                                    className="w-full px-3 py-[6px] border rounded-lg"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="flex justify-center">
