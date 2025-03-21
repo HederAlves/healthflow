@@ -12,6 +12,7 @@ export interface VitalData {
     heartRate: number;
     bloodPressure: string;
     respiratoryRate: number;
+    saturation: number;
 }
 
 export interface HealthFlow {
